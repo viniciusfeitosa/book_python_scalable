@@ -5,17 +5,17 @@ LOOP_VALUE = 1_000_000
 
 def run_for() -> int:
     resp = 0
-    for i in range(LOOP_VALUE):
-        resp += i
+    for index in range(LOOP_VALUE):
+        resp += index
     return resp
 
 
 def run_while() -> int:
     resp = 0
-    i = 0
-    while i < LOOP_VALUE:
-        resp += i
-        i += 1
+    index = 0
+    while index < LOOP_VALUE:
+        resp += index
+        index += 1
     return resp
 
 

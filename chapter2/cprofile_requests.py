@@ -36,9 +36,9 @@ def get_habs_per_planet() -> dict:
 if __name__ == '__main__':
     import cProfile
     import pstats
-    profiler = cProfile.Profile()
-    profiler.enable()
-    get_habs_per_planet()
-    profiler.disable()
-    stats = pstats.Stats(profiler).sort_stats('cumtime')
-    stats.print_stats()
+    with cProfile.Profile() as p:
+        get_habs_per_planet()
+    stats = pstats.Stats(p)
+    stats.sort_stats('cumtime')
+    # stats.print_stats()
+    stats.dump_stats('out1.prof')
