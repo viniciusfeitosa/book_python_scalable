@@ -1,11 +1,11 @@
 from memory_profiler import profile
 
 
-@profile
-def main() -> int:
+@profile(precision=4)
+def main() -> None:
     l1 = [value for value in range(1_000_000)]
-    l2 = [value+value for value in range(1_000_000)]
-    return sum(l1) + sum(l2)
+    print(sum(l1))
+    del l1
 
 
 if __name__ == '__main__':
