@@ -1,31 +1,24 @@
-def divided_by_two(values: list) -> list:
-    resp = []
-    for num in values:
-        if num % 2 == 0:
-            resp.append(num)
-    return resp
-
-
-def sum_num(values: list) -> int:
-    resp = 0
-    for value in values:
-        resp += value
-    return resp
-
-
 def main() -> None:
-    values = list(range(1_000_001))
-    values = divided_by_two(values)
-    value = sum_num(values)
-    print('final value', value)
+    l1 = []
+    for value in range(1_000_000):
+        l1.append(value)
+    print(sum(l1))
 
 
 if __name__ == '__main__':
+    # Importing libs cProfile and pstats
     import cProfile
     import pstats
+    # Collecting statistics using cProfile
     with cProfile.Profile() as p:
         main()
+    # Instantiating  pstats using data from cProfile
     stats = pstats.Stats(p)
+    # Removing directory names from filename fields
+    stats.strip_dirs()
+    # Sorting data by total time (tottime)
     stats.sort_stats(pstats.SortKey.TIME)
+    # Printing the statistics
     stats.print_stats()
-    # stats.dump_stats('out.prof')
+    # Creating file to be read by snakeviz
+    stats.dump_stats('out.prof')
