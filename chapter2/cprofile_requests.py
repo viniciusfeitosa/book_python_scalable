@@ -14,7 +14,7 @@ def get_hab_name(url: str) -> str:
     return raw_data.get('name')
 
 
-def get_habs_per_planet() -> dict:
+def join_habs_per_planet() -> dict:
     habs_per_planet = dict()
     planets = list()
     for i in range(1, 7):
@@ -37,8 +37,9 @@ if __name__ == '__main__':
     import cProfile
     import pstats
     with cProfile.Profile() as p:
-        get_habs_per_planet()
+        join_habs_per_planet()
     stats = pstats.Stats(p)
-    stats.sort_stats('cumtime')
-    # stats.print_stats()
-    stats.dump_stats('out1.prof')
+    stats.strip_dirs()
+    stats.sort_stats(pstats.SortKey.TIME)
+    stats.print_stats()
+    stats.dump_stats('out.prof')

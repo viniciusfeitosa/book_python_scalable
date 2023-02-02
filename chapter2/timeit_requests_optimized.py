@@ -1,6 +1,5 @@
 import requests
 from pprint import pprint
-import timeit
 
 PLANET_URL = 'https://swapi.dev/api/planets/?format=json'
 
@@ -15,7 +14,7 @@ def get_hab_name(client: requests.Session, url: str) -> str:
     return raw_data.get('name')
 
 
-def get_habs_per_planet() -> dict:
+def join_habs_per_planet() -> dict:
     habs_per_planet = dict()
     planets = list()
     with requests.Session() as client:
@@ -37,7 +36,8 @@ def get_habs_per_planet() -> dict:
 
 
 if __name__ == '__main__':
+    import timeit
     starttime = timeit.default_timer()
     print("The start time is:", starttime)
-    get_habs_per_planet()
-    print("The time difference is :", timeit.default_timer() - starttime)
+    join_habs_per_planet()
+    print("The total time is :", timeit.default_timer() - starttime)

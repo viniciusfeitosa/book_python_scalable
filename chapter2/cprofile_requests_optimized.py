@@ -14,7 +14,7 @@ def get_hab_name(client: requests.Session, url: str) -> str:
     return raw_data.get('name')
 
 
-def get_habs_per_planet() -> dict:
+def join_habs_per_planet() -> dict:
     habs_per_planet = dict()
     planets = list()
     with requests.Session() as client:
@@ -39,8 +39,9 @@ if __name__ == '__main__':
     import cProfile
     import pstats
     with cProfile.Profile() as p:
-        get_habs_per_planet()
+        join_habs_per_planet()
     stats = pstats.Stats(p)
-    stats.sort_stats('cumtime')
-    # stats.print_stats()
-    stats.dump_stats('out2.prof')
+    stats.strip_dirs()
+    stats.sort_stats(pstats.SortKey.TIME)
+    stats.print_stats()
+    stats.dump_stats('out.prof')

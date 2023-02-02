@@ -44,8 +44,12 @@ async def join_habs_per_planet() -> dict:
 
 
 if __name__ == '__main__':
-    import timeit
-    starttime = timeit.default_timer()
-    print("The start time is:", starttime)
-    asyncio.run(join_habs_per_planet())
-    print("The total time is :", timeit.default_timer() - starttime)
+    import cProfile
+    import pstats
+    with cProfile.Profile() as p:
+        asyncio.run(join_habs_per_planet())
+    stats = pstats.Stats(p)
+    stats.strip_dirs()
+    stats.sort_stats(pstats.SortKey.TIME)
+    stats.print_stats()
+    stats.dump_stats('out.prof')
