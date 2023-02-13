@@ -1,0 +1,22 @@
+import random
+
+from sanic import Sanic
+from sanic.response import json
+from models import fibonacci
+
+
+app = Sanic("SanicFibonacciApp")
+
+
+@app.get("/fibonacci/")
+async def hello_world(request):
+    random_num = random.randint(1, 10)
+    data = {
+        'random_num': random_num,
+        'fib_result': fibonacci(random_num),
+    }
+    return json(data)
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, fast=True)
