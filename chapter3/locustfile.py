@@ -1,7 +1,7 @@
-from locust import HttpUser, task
+from locust import FastHttpUser, task
 
 
-class FibonacciDjangoTest(HttpUser):
+class FibonacciDjangoTest(FastHttpUser):
     @task
     def fibonacci(self):
         self.client.get("/fibonacci/")

@@ -7,11 +7,11 @@ services:
     deploy:
       resources:
         limits:
+          cpus: '2'
+          memory: 1024M
+        reservations:
           cpus: '1'
           memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
     build: .
     volumes:
       - './django_application:/app'
@@ -20,14 +20,6 @@ services:
     restart: always
 
   web_server:
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
     build: ./nginx
     ports:
       - "80:80"
