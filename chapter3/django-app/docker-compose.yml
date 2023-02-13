@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  application:
+    image: application
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    build: .
+    volumes:
+      - './django_application:/app'
+      - static_volume:/app/test_app/static
+    ports:
+      - 8080:8080
+    restart: always
+
+  web_server:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    build: ./nginx
+    ports:
+      - "80:80"
+    links:
+      - application
+    depends_on:
+      - application
+    volumes:
+      - static_volume:/app/test_app/static
+    restart: always
+
+volumes:
+  static_volume:
