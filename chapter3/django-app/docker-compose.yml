@@ -15,7 +15,6 @@ services:
     build: .
     volumes:
       - './django_application:/app'
-      - static_volume:/app/test_app/static
     ports:
       - 8080:8080
     restart: always

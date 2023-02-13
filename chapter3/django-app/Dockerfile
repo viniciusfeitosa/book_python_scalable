@@ -6,8 +6,8 @@ ENV PYTHONUNBUFFERED 1
 COPY . /app
 WORKDIR /app
 
-COPY Pipfile Pipfile.lock ./
-RUN python -m pip install --upgrade pip
-RUN pip install pipenv && pipenv install --dev --system --deploy
+RUN pip install pipenv
 
-CMD ["uwsgi", "--ini", "run.ini"]
+RUN pipenv install --skip-lock --system --deploy
+
+CMD ["uwsgi", "--ini", "uwsgi.ini"]

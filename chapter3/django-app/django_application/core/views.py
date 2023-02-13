@@ -1,6 +1,7 @@
 import random
 
 from rest_framework import views
+from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 
 from .models import fibonacci
@@ -15,4 +16,7 @@ class FibView(views.APIView):
             'random_num': random_num,
             'fib_result': fibonacci(random_num),
         }).data
-        return Response(results)
+        return Response(
+            data=results,
+            status=HTTP_200_OK,
+        )

@@ -15,13 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import (
-    include,
     path,
 )
-from django_application.core.views import FibView
+from core.views import FibView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
     path('fibonacci/', FibView.as_view(), name='fibonacci')
 ]
