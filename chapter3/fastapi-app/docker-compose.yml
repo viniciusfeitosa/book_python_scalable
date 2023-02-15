@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  application:
+    image: application
+    command: uvicorn server:app --host 0.0.0.0 --port 8080 --workers 4
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1024M
+        reservations:
+          cpus: '1'
+          memory: 512M
+    build: ./fastapi_app
+    volumes:
+      - './fastapi_app:/app'
+    ports:
+      - 8080:8080
+    restart: always
+
+  web_server:
+    build: ./nginx
+    ports:
+      - "80:80"
+    links:
+      - application
+    depends_on:
+      - application
+    restart: always

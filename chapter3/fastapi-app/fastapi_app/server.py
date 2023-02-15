@@ -1,13 +1,13 @@
 import random
 
-from flask import Flask
+from fastapi import FastAPI
 from models import fibonacci
 
-app = Flask(__name__)
+app = FastAPI()
 
 
 @app.get("/fibonacci/")
-def hello_world():
+async def core():
     random_num = random.randint(1, 10)
     return {
         'random_num': random_num,
