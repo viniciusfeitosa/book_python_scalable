@@ -27,10 +27,3 @@ up-tests:
 		docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build -d
 		sleep 5
 		docker-compose ps
-
-static:
-		docker-compose exec application python /app/newspaper/manage.py collectstatic
-
-migrate:
-		docker-compose exec application python /app/newspaper/manage.py makemigrations
-		docker-compose exec application python /app/newspaper/manage.py migrate
