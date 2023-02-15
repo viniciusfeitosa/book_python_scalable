@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 fastapi = "~=0.92"
-prometheus-fastapi-instrumentator = "~=1.1"
 uvicorn = {version="~=0.20", extras=["standard"]}
 
 [dev-packages]
