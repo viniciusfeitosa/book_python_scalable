@@ -1,17 +1,15 @@
 import random
 
-from sanic import Sanic
-from sanic.response import json
+from fastapi import FastAPI
 from models import fibonacci
 
-app = Sanic("SanicFibonacciApp")
+app = FastAPI()
 
 
 @app.get("/fibonacci/")
-async def core(request):
+async def core():
     random_num = random.randint(1, 10)
-    data = {
+    return {
         'random_num': random_num,
         'fib_result': fibonacci(random_num),
     }
-    return json(data)

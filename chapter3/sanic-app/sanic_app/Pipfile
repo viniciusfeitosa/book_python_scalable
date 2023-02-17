@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 sanic = "~=22.12"
+uvicorn = {version="~=0.20"}
+gunicorn = {version="~=20.1"}
 
 [dev-packages]
 flake8 = "*"

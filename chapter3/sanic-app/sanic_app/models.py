@@ -3,7 +3,7 @@ def fibonacci(value: int) -> int:
     b = 1
     if value in {a, b}:
         return value
-    for i in range(1, value):
+    for _ in range(1, value):
         c = a + b
         a = b
         b = c

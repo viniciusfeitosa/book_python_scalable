@@ -13,11 +13,11 @@ services:
         reservations:
           cpus: '1'
           memory: 512M
-    build: ./sanic_app
+    build: ./fastapi_app_scaled
     volumes:
-      - './sanic_app:/app'
+      - './fastapi_app_scaled:/app'
     ports:
-      - 8080:8080
+      - 9081-9086:8080
     restart: always
 
   web_server:

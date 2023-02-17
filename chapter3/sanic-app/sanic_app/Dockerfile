@@ -9,5 +9,3 @@ WORKDIR /app
 RUN pip install pipenv
 
 RUN pipenv install --skip-lock --system --deploy
-
-CMD ["python", "server.py"]

@@ -8,7 +8,7 @@ django = "~=4.1"
 djangorestframework = "~=3.14"
 django-filter = "~=22.1"
 Markdown = "~=3.4"
-uwsgi = "~=2.0"
+gunicorn = {version="~=20.1"}
 
 [dev-packages]
 flake8 = "*"
