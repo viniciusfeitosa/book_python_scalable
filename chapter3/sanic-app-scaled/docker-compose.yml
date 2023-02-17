@@ -13,9 +13,9 @@ services:
         reservations:
           cpus: '1'
           memory: 512M
-    build: ./fastapi_app_scaled
+    build: ./sanic_app_scaled
     volumes:
-      - './fastapi_app_scaled:/app'
+      - './sanic_app_scaled:/app'
     ports:
       - 9082-9087:8080
     restart: always
