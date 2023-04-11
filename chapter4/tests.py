@@ -1,119 +1,63 @@
 import pytest
-from datetime import datetime
-
-from domain import (
-    EmailAddress,
-    EmailAddressError,
-    FollowerRelationship,
-    Tweet,
-    User,
-    get_user_feed,
-)
+from domain import User, Tweet, Email, TweetDTO
 
 
-def test_user_creation():
-    user = User(
-        user_id=1,
-        name="John Doe",
-        email=EmailAddress("john.doe@example.com"),
-    )
-    assert user.user_id == 1
-    assert user.name == "John Doe"
-    assert user.email == EmailAddress("john.doe@example.com")
+def test_user_follow_and_unfollow():
+    alice = User(1, "alice", "alice@example.com")
+    bob = User(2, "bob", "bob@example.com")
+
+    alice.follow(bob)
+    assert alice in bob.followers
+    assert bob in alice.following
+
+    alice.unfollow(bob)
+    assert alice not in bob.followers
+    assert bob not in alice.following
 
 
-def test_tweet_creation():
-    user = User(
-        user_id=1,
-        name="John Doe",
-        email=EmailAddress("john.doe@example.com"),
-    )
-    tweet = Tweet(
-        tweet_id=1,
-        content="Hello, world!",
-        user=user,
-        created_at=datetime.utcnow(),
-    )
-    assert tweet.tweet_id == 1
-    assert tweet.content == "Hello, world!"
-    assert tweet.user == user
+def test_email_validation():
+    with pytest.raises(ValueError):
+        Email("invalid_email")
+
+    valid_email = Email("valid@example.com")
+    assert str(valid_email) == "valid@example.com"
 
 
-def test_email_address_validation():
-    with pytest.raises(EmailAddressError):
-        EmailAddress("invalid-email")
+def test_post_tweet_and_get_feed():
+    alice = User(1, "alice", "alice@example.com")
+    bob = User(2, "bob", "bob@example.com")
+    charlie = User(3, "charlie", "charlie@example.com")
+
+    alice.follow(bob)
+    alice.follow(charlie)
+
+    tweet1 = Tweet(1, alice, "Hello, world!")
+    tweet2 = Tweet(2, bob, "Hi, Alice!")
+    tweet3 = Tweet(3, charlie, "Good morning, everyone!")
+
+    alice.post_tweet(tweet1)
+    bob.post_tweet(tweet2)
+    charlie.post_tweet(tweet3)
+
+    alice_feed = alice.get_feed()
+    assert len(alice_feed) == 3
+    assert alice_feed[0] == TweetDTO(
+        3, "charlie", "Good morning, everyone!", tweet3.timestamp, 0)
+    assert alice_feed[1] == TweetDTO(
+        2, "bob", "Hi, Alice!", tweet2.timestamp, 0)
+    assert alice_feed[2] == TweetDTO(
+        1, "alice", "Hello, world!", tweet1.timestamp, 0)
 
 
-def test_email_address_equality():
-    email1 = EmailAddress("john.doe@example.com")
-    email2 = EmailAddress("john.doe@example.com")
-    email3 = EmailAddress("jane.doe@example.com")
-    assert email1 == email2
-    assert email1 != email3
+def test_tweet_like_and_unlike():
+    alice = User(1, "alice", "alice@example.com")
+    bob = User(2, "bob", "bob@example.com")
+    tweet = Tweet(1, alice, "Hello, world!")
 
+    tweet.like(bob)
+    assert bob in tweet.likes
+    assert alice not in tweet.likes
 
-def test_create_follower_relationship():
-    user1 = User(
-        user_id=1,
-        name="John Doe",
-        email=EmailAddress("john.doe@example.com"),
-    )
-    user2 = User(
-        user_id=1,
-        name="Jane Doe",
-        email=EmailAddress("jane.doe@example.com"),
-    )
-    relationship = FollowerRelationship(follower=user1, following=user2)
-    assert relationship.follower == user1
-    assert relationship.following == user2
-
-
-def test_read_feed():
-    user1 = User(
-        user_id=1,
-        name="John Doe",
-        email=EmailAddress("john.doe@example.com"),
-    )
-    user2 = User(
-        user_id=1,
-        name="Jane Doe",
-        email=EmailAddress("jane.doe@example.com"),
-    )
-    user3 = User(
-        user_id=3,
-        name="Non Used",
-        email=EmailAddress("non.used@example.com"),
-    )
-    user1.add_follow(user2)
-
-    tweets = [
-        Tweet(
-            tweet_id=1,
-            content="Hello World",
-            user=user1,
-            created_at=datetime.utcnow(),
-        ),
-        Tweet(
-            tweet_id=2,
-            content="Hola que tal",
-            user=user2,
-            created_at=datetime.utcnow(),
-        ),
-        Tweet(
-            tweet_id=3,
-            content="Hey hey!",
-            user=user2,
-            created_at=datetime.utcnow(),
-        ),
-        Tweet(
-            tweet_id=4,
-            content="Non used tweet",
-            user=user3,
-            created_at=datetime.utcnow(),
-        )
-    ]
-
-    feed = get_user_feed(user=user1, tweets=tweets)
-    assert len(feed.tweets) == 3
-    assert feed.get_tweets()[2].tweet_id == 3
-    assert feed.get_tweets()[2].user_name == 'Jane Doe'
+    tweet.unlike(bob)
+    assert bob not in tweet.likes
+    assert alice not in tweet.likes

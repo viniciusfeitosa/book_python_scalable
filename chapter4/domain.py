@@ -1,93 +1,113 @@
-import re
-from dataclasses import dataclass
 import datetime
-
-regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-
-
-class EmailAddressError(ValueError):
-    ...
+import re
 
 
-class EmailAddress:
+class Email:
     def __init__(self, address):
-        self._validate(address)
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", address):
+            raise ValueError("Invalid email address")
         self.address = address
 
-    def _validate(self, address):
-        if not re.fullmatch(regex, address):
-            raise EmailAddressError(f"email: {address} is invalid")
+    def __str__(self):
+        return self.address
 
     def __eq__(self, other):
-        if isinstance(other, EmailAddress):
-            return self.address == other.address
-        return False
+        return isinstance(other, Email) and self.address == other.address
+
+    def __hash__(self):
+        return hash(self.address)
+
+
+class TweetDTO:
+    def __init__(self, tweet_id, username, content, timestamp, num_likes):
+        self.tweet_id = tweet_id
+        self.username = username
+        self.content = content
+        self.timestamp = timestamp
+        self.num_likes = num_likes
+
+    def __str__(self):
+        return f"{self.content} - author: {self.username}"
+
+    def __eq__(self, other):
+        return isinstance(other, TweetDTO) and self.tweet_id == other.tweet_id
+
+    def __hash__(self):
+        return hash(f"{self.tweet_id}_{self.username}")
 
 
 class User:
-    def __init__(
-        self,
-        user_id: int,
-        name: str,
-        email: EmailAddress,
-        following_relationships: list['FollowerRelationship'] = [],
-    ) -> None:
+    def __init__(self, user_id, username, email):
         self.user_id = user_id
-        self.name = name
-        self.email = email
-        self.following_relationships = following_relationships
+        self.username = username
+        self.email = Email(email)
+        self.followers = set()
+        self.following = set()
+        self.tweets = []
 
-    def add_follow(self, user: 'User'):
-        self.following_relationships.append(FollowerRelationship(self, user))
+    def follow(self, user):
+        self.following.add(user)
+        user.followers.add(self)
+
+    def unfollow(self, user):
+        self.following.discard(user)
+        user.followers.discard(self)
+
+    def post_tweet(self, tweet):
+        self.tweets.append(tweet)
+
+    def get_feed(self):
+        feed = [tweet for user in self.following for tweet in user.tweets]
+        feed.extend(self.tweets)
+        feed.sort(key=lambda tweet: tweet.timestamp, reverse=True)
+        return [
+            TweetDTO(
+                tweet.tweet_id,
+                tweet.user.username,
+                tweet.content,
+                tweet.timestamp,
+                len(tweet.likes)
+            ) for tweet in feed
+        ]
 
 
-@dataclass
-class FollowerRelationship:
-    follower: User
-    following: User
-
-
-@dataclass
 class Tweet:
-    tweet_id: int
-    content: str
-    user: User
-    created_at: datetime.datetime
-
-
-@dataclass
-class TweetDTO:
-    tweet_id: int
-    content: str
-    user_name: str
-    created_at: datetime.datetime
-
-
-class Feed:
-    def __init__(self, user: User) -> None:
+    def __init__(self, tweet_id, user, content):
+        self.tweet_id = tweet_id
         self.user = user
-        self.tweets: list[TweetDTO] = []
+        self.content = content
+        self.timestamp = datetime.datetime.now()
+        self.likes = set()
 
-    def add_tweet(self, tweet: Tweet) -> None:
-        self.tweets.append(TweetDTO(
-            tweet_id=tweet.tweet_id,
-            content=tweet.content,
-            user_name=tweet.user.name,
-            created_at=tweet.created_at,
-        ))
+    def like(self, user):
+        self.likes.add(user)
 
-    def get_tweets(self) -> list[TweetDTO]:
-        return self.tweets
+    def unlike(self, user):
+        self.likes.discard(user)
+
+    def __str__(self):
+        return f"{self.content} - {self.user.username}"
 
 
-def get_user_feed(user: User, tweets: list[Tweet]) -> Feed:
-    feed = Feed(user=user)
-    users_to_feed = [user.user_id]
-    users_to_feed += [
-        rel.following.user_id
-        for rel in user.following_relationships
-    ]
-    for tweet in tweets:
-        if tweet.user.user_id in users_to_feed:
-            feed.add_tweet(tweet=tweet)
-    return feed
+if __name__ == '__main__':
+    # Create users
+    alice = User(1, "alice", "alice@example.com")
+    bob = User(2, "bob", "bob@example.com")
+    charlie = User(3, "charlie", "charlie@example.com")
+
+    # Users follow each other
+    alice.follow(bob)
+    alice.follow(charlie)
+    bob.follow(alice)
+
+    # Users post tweets
+    alice.post_tweet(Tweet(1, alice, "Hello, world!"))
+    bob.post_tweet(Tweet(2, bob, "Hi, Alice!"))
+    charlie.post_tweet(Tweet(3, charlie, "Good morning, everyone!"))
+
+    # Display the feed of each user
+    for user in [alice, bob, charlie]:
+        print(f"{user.username}'s feed:")
+        for tweet in user.get_feed():
+            print(tweet)
+        print()
