@@ -81,10 +81,14 @@ def load_mappers():
         domain.Tweet,
         tweets,
         properties={
+            'user': relationship(
+                users_mapper,
+                backref='tweets',
+            ),
             'likes': relationship(
                 users_mapper,
                 secondary=likes,
-                backref='tweets',
+                backref='liked_tweets',
                 collection_class=set,
             )
         }

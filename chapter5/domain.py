@@ -50,7 +50,7 @@ class User:
         self.email = Email(email).address
         self.followers = set()  # type: set[User]
         self.following = set()  # type: set[User]
-        self.tweet: list = []
+        self.tweets: list = []
 
     def follow(self, user):
         self.following.add(user)
