@@ -1,49 +1,56 @@
-import datetime
+from datetime import datetime
 import re
+from typing import Any
 
 
 class Email:
-    def __init__(self, address):
+    def __init__(self, address: str) -> None:
         if not re.match(r"[^@]+@[^@]+\.[^@]+", address):
             raise ValueError("Invalid email address")
         self.address = address
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.address
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Email) and self.address == other.address
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.address)
 
 
 class TweetDTO:
-    def __init__(self, tweet_id, username, content, timestamp, num_likes):
+    def __init__(
+            self,
+            tweet_id: int,
+            username: str,
+            content: str,
+            timestamp: datetime,
+            num_likes: int,
+    ) -> None:
         self.tweet_id = tweet_id
         self.username = username
         self.content = content
         self.timestamp = timestamp
         self.num_likes = num_likes
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.content} - author: {self.username}"
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, TweetDTO) and self.tweet_id == other.tweet_id
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(f"{self.tweet_id}_{self.username}")
 
 
 class User:
-    def __init__(self, user_id, username, email):
-        self.user_id = user_id
+    def __init__(self, username: str, email: str) -> None:
         self.username = username
-        self.email = Email(email)
-        self.followers = set()
-        self.following = set()
-        self.tweets = []
+        self.email = Email(email).address
+        self.followers = set()  # type: set[User]
+        self.following = set()  # type: set[User]
+        self.tweet: list = []
 
     def follow(self, user):
         self.following.add(user)
@@ -62,7 +69,7 @@ class User:
         feed.sort(key=lambda tweet: tweet.timestamp, reverse=True)
         return [
             TweetDTO(
-                tweet.tweet_id,
+                tweet.id,
                 tweet.user.username,
                 tweet.content,
                 tweet.timestamp,
@@ -70,14 +77,22 @@ class User:
             ) for tweet in feed
         ]
 
+    def __str__(self) -> str:
+        return self.username
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, User) and self.username == other.username
+
+    def __hash__(self) -> int:
+        return hash(f"{self.username}_{self.email}")
+
 
 class Tweet:
-    def __init__(self, tweet_id, user, content):
-        self.tweet_id = tweet_id
+    def __init__(self, user: User, content: str):
         self.user = user
         self.content = content
-        self.timestamp = datetime.datetime.now()
-        self.likes = set()
+        self.timestamp = datetime.now()
+        self.likes = set()  # type: set[User]
 
     def like(self, user):
         self.likes.add(user)
@@ -88,26 +103,9 @@ class Tweet:
     def __str__(self):
         return f"{self.content} - {self.user.username}"
 
-
-if __name__ == '__main__':
-    # Create users
-    alice = User(1, "alice", "alice@example.com")
-    bob = User(2, "bob", "bob@example.com")
-    charlie = User(3, "charlie", "charlie@example.com")
-
-    # Users follow each other
-    alice.follow(bob)
-    alice.follow(charlie)
-    bob.follow(alice)
-
-    # Users post tweets
-    alice.post_tweet(Tweet(1, alice, "Hello, world!"))
-    bob.post_tweet(Tweet(2, bob, "Hi, Alice!"))
-    charlie.post_tweet(Tweet(3, charlie, "Good morning, everyone!"))
-
-    # Display the feed of each user
-    for user in [alice, bob, charlie]:
-        print(f"{user.username}'s feed:")
-        for tweet in user.get_feed():
-            print(tweet)
-        print()
+    def __eq__(self, other: Any) -> bool:
+        return all([
+            isinstance(other, Tweet),
+            self.user == other.user,
+            self.content == other.content,
+        ])
