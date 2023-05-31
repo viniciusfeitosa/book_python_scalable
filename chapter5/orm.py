@@ -14,7 +14,7 @@ from sqlalchemy.orm import (
 )
 
 
-import domain
+import model
 
 
 mapper_registry = registry()
@@ -62,13 +62,13 @@ likes = Table(
 
 
 def load_mappers():
-    mapper_registry.map_imperatively(domain.Email, emails)
+    mapper_registry.map_imperatively(model.Email, emails)
     users_mapper = mapper_registry.map_imperatively(
-        domain.User,
+        model.User,
         users,
         properties={
             'followers': relationship(
-                domain.User,
+                model.User,
                 secondary=follow_table,
                 primaryjoin=users.c.id == follow_table.c.following,
                 secondaryjoin=users.c.id == follow_table.c.followers,
@@ -78,7 +78,7 @@ def load_mappers():
         }
     )
     mapper_registry.map_imperatively(
-        domain.Tweet,
+        model.Tweet,
         tweets,
         properties={
             'user': relationship(
