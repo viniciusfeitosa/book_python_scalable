@@ -4,8 +4,10 @@ import database.repositories as repositories
 
 def test_user_repository(session):
     repo = repositories.UserRepository(session)
-    repo.add(model.User('test1', 'test1@test.com'))
-    repo.add(model.User('test2', 'test2@test.com'))
+    user_created_1 = repo.add(model.User('test1', 'test1@test.com'))
+    user_created_2 = repo.add(model.User('test2', 'test2@test.com'))
+    assert user_created_1.id == 1
+    assert user_created_2.id == 2
 
     all_users = repo.list_all()
     assert len(all_users) == 2

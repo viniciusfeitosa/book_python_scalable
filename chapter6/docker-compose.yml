@@ -22,7 +22,4 @@ services:
     volumes:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - MYSQL_DATABASE=tweet_db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
-      - MYSQL_ROOT_PASSWORD=password
+      - DB_URL=mysql+mysqlconnector://root:password@mysql:3306/tweet_db

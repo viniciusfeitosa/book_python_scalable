@@ -37,7 +37,6 @@ def create_tweet(
 ):
     user = get_user_by_username(user_repository, username)
     tweet = Tweet(user=user, content=content)
-    user.post_tweet(tweet)
     tweet_repository.add(tweet)
     return TweetDTO(
         tweet_id=tweet.id,

@@ -8,8 +8,11 @@ class UserRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def add(self, user: model.User) -> None:
+    def add(self, user: model.User) -> model.User:
         self.session.add(user)
+        self.session.flush()
+        self.session.refresh(user)
+        return user
 
     def get_by_username(self, username: str) -> Optional[model.User]:
         return self.session.query(
@@ -28,8 +31,11 @@ class TweetRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def add(self, tweet: model.Tweet) -> None:
+    def add(self, tweet: model.Tweet) -> model.Tweet:
         self.session.add(tweet)
+        self.session.flush()
+        self.session.refresh(tweet)
+        return tweet
 
     def get_by_id(self, tweet_id: int) -> Optional[model.Tweet]:
         return self.session.query(
