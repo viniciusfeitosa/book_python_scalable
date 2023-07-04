@@ -1,4 +1,4 @@
-import core.model as model
+import app.core.model as model
 from sqlalchemy import text
 
 

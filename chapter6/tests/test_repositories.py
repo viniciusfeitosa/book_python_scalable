@@ -1,5 +1,5 @@
-import core.model as model
-import database.repositories as repositories
+import app.core.model as model
+import app.database.repositories as repositories
 
 
 def test_user_repository(session):

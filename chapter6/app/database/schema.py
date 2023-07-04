@@ -14,7 +14,7 @@ from sqlalchemy.orm import (
 )
 
 
-import core.model as model
+import app.core.model as model
 
 
 mapper_registry = registry()

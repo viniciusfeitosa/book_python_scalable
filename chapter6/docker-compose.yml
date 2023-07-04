@@ -8,11 +8,11 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
     depends_on:
       - mysql
     environment:
-      - PYTHONUNBUFFERED=1
+      - DB_URL=mysql+mysqlconnector://app_user:password@mysql:3306/tweet_db
   mysql:
     build:
       context: ./docker/mysql
@@ -22,4 +22,7 @@ services:
     volumes:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - DB_URL=mysql+mysqlconnector://root:password@mysql:3306/tweet_db
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=tweet_db
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=password

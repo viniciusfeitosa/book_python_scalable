@@ -2,6 +2,8 @@ from datetime import datetime
 import re
 from typing import Any
 
+from dataclasses import dataclass
+
 
 class Email:
     def __init__(self, address: str) -> None:
@@ -17,31 +19,6 @@ class Email:
 
     def __hash__(self) -> int:
         return hash(self.address)
-
-
-class TweetDTO:
-    def __init__(
-            self,
-            tweet_id: int,
-            username: str,
-            content: str,
-            timestamp: datetime,
-            num_likes: int,
-    ) -> None:
-        self.tweet_id = tweet_id
-        self.username = username
-        self.content = content
-        self.timestamp = timestamp
-        self.num_likes = num_likes
-
-    def __str__(self) -> str:
-        return f"{self.content} - author: {self.username}"
-
-    def __eq__(self, other: Any) -> bool:
-        return isinstance(other, TweetDTO) and self.tweet_id == other.tweet_id
-
-    def __hash__(self) -> int:
-        return hash(f"{self.tweet_id}_{self.username}")
 
 
 class User:
@@ -87,6 +64,22 @@ class User:
         return hash(f"{self.username}_{self.email}")
 
 
+@dataclass
+class UserDTO:
+    user_id: int
+    username: str
+    email: str
+
+    def __str__(self) -> str:
+        return self.username
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, User) and self.username == other.username
+
+    def __hash__(self) -> int:
+        return hash(f"{self.username}_{self.email}")
+
+
 class Tweet:
     def __init__(self, user: User, content: str):
         self.user = user
@@ -109,3 +102,21 @@ class Tweet:
             self.user == other.user,
             self.content == other.content,
         ])
+
+
+@dataclass
+class TweetDTO:
+    tweet_id: int
+    username: str
+    content: str
+    timestamp: datetime
+    num_likes: int
+
+    def __str__(self) -> str:
+        return f"{self.content} - author: {self.username}"
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, TweetDTO) and self.tweet_id == other.tweet_id
+
+    def __hash__(self) -> int:
+        return hash(f"{self.tweet_id}_{self.username}")
