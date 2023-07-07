@@ -12,16 +12,13 @@ def test_user_repository(session):
     all_users = repo.list_all()
     assert len(all_users) == 2
 
-    user_1 = repo.get_by_username('test1')
+    user_1 = repo.get_by_id(user_created_1.id)
     assert user_1.username == 'test1'
 
-    user_2 = repo.get_by_email('test2@test.com')
+    user_2 = repo.get_by_id(user_created_2.id)
     assert user_2.username == 'test2'
 
-    user_does_not_exists = repo.get_by_username('john_doe')
-    assert user_does_not_exists is None
-
-    user_does_not_exists = repo.get_by_email('john_doe@test.com')
+    user_does_not_exists = repo.get_by_id(3)
     assert user_does_not_exists is None
 
 

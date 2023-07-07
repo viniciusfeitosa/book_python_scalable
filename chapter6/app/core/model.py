@@ -1,8 +1,16 @@
+from abc import ABC
 from datetime import datetime
 import re
 from typing import Any
 
 from dataclasses import dataclass
+
+
+class Model(ABC):
+    id: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return dict(vars(self))
 
 
 class Email:
@@ -21,7 +29,7 @@ class Email:
         return hash(self.address)
 
 
-class User:
+class User(Model):
     def __init__(self, username: str, email: str) -> None:
         self.username = username
         self.email = Email(email).address
@@ -80,7 +88,7 @@ class UserDTO:
         return hash(f"{self.username}_{self.email}")
 
 
-class Tweet:
+class Tweet(Model):
     def __init__(self, user: User, content: str):
         self.user = user
         self.content = content

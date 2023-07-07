@@ -1,6 +1,17 @@
 import app.core.model as model
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, Protocol
+
+
+class RepositoryInterface(Protocol):
+    def add(self, obj: model.Model) -> model.Model:
+        ...
+
+    def get_by_id(self, obj_id: int) -> Optional[model.Model]:
+        ...
+
+    def list_all(self) -> list[model.Model]:
+        ...
 
 
 class UserRepository:
@@ -8,19 +19,15 @@ class UserRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def add(self, user: model.User) -> model.User:
-        self.session.add(user)
+    def add(self, obj: model.User) -> model.User:
+        self.session.add(obj)
         self.session.flush()
-        self.session.refresh(user)
-        return user
+        self.session.refresh(obj)
+        return obj
 
-    def get_by_username(self, username: str) -> Optional[model.User]:
+    def get_by_id(self, obj_id: int) -> Optional[model.User]:
         return self.session.query(
-            model.User).filter_by(username=username).first()
-
-    def get_by_email(self, email: model.Email) -> Optional[model.User]:
-        return self.session.query(
-            model.User).filter_by(email=email).first()
+            model.User).filter_by(id=obj_id).one_or_none()
 
     def list_all(self) -> list[model.User]:
         return self.session.query(model.User).all()
@@ -31,15 +38,15 @@ class TweetRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def add(self, tweet: model.Tweet) -> model.Tweet:
-        self.session.add(tweet)
+    def add(self, obj: model.Tweet) -> model.Tweet:
+        self.session.add(obj)
         self.session.flush()
-        self.session.refresh(tweet)
-        return tweet
+        self.session.refresh(obj)
+        return obj
 
-    def get_by_id(self, tweet_id: int) -> Optional[model.Tweet]:
+    def get_by_id(self, obj_id: int) -> Optional[model.Tweet]:
         return self.session.query(
-            model.Tweet).filter_by(id=tweet_id).one_or_none()
+            model.Tweet).filter_by(id=obj_id).one_or_none()
 
     def list_all(self) -> list[model.Tweet]:
         return self.session.query(model.Tweet).all()

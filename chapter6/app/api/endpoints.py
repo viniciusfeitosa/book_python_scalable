@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, APIRouter
 from app.core.model import UserDTO, TweetDTO
 from app.core import services
 from app.database.database import get_user_repository, get_tweet_repository
-from app.database.repositories import UserRepository, TweetRepository
+from app.database.repositories import RepositoryInterface
 
 router = APIRouter()
 
@@ -11,7 +11,7 @@ router = APIRouter()
 def create_user(
     username: str,
     email: str,
-    user_repository: UserRepository = Depends(get_user_repository)
+    user_repository: RepositoryInterface = Depends(get_user_repository)
 ):
     return services.create_user(
         user_repo=user_repository,
@@ -20,15 +20,15 @@ def create_user(
     )
 
 
-@router.get("/users/{username}", response_model=UserDTO)
+@router.get("/users/{user_id}", response_model=UserDTO)
 def get_user(
-    username: str,
-    user_repository: UserRepository = Depends(get_user_repository)
+    user_id: int,
+    user_repository: RepositoryInterface = Depends(get_user_repository)
 ):
     try:
-        return services.get_user_by_username(
+        return services.get_user_by_id(
             user_repo=user_repository,
-            username=username,
+            user_id=user_id,
         )
     except services.UserNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -36,16 +36,16 @@ def get_user(
 
 @router.post("/users/{username}/tweets", response_model=TweetDTO)
 def create_tweet(
-    username: str,
+    user_id: int,
     content: str,
-    user_repository: UserRepository = Depends(get_user_repository),
-    tweet_repository: TweetRepository = Depends(get_tweet_repository),
+    user_repository: RepositoryInterface = Depends(get_user_repository),
+    tweet_repository: RepositoryInterface = Depends(get_tweet_repository),
 ):
     try:
         return services.create_tweet(
             tweet_repo=tweet_repository,
             user_repo=user_repository,
-            username=username,
+            user_id=user_id,
             content=content,
         )
     except services.UserNotFoundError as e:

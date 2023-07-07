@@ -1,4 +1,4 @@
-from app.database.repositories import UserRepository, TweetRepository
+from app.database.repositories import RepositoryInterface
 from app.core.model import User, UserDTO, Tweet, TweetDTO
 
 
@@ -7,7 +7,7 @@ class UserNotFoundError(Exception):
 
 
 def create_user(
-    user_repo: UserRepository,
+    user_repo: RepositoryInterface,
     username: str,
     email: str,
 ) -> UserDTO:
@@ -19,13 +19,13 @@ def create_user(
     )
 
 
-def get_user_by_username(
-    user_repo: UserRepository,
-    username: str,
+def get_user_by_id(
+    user_repo: RepositoryInterface,
+    user_id: int,
 ) -> UserDTO:
-    user = user_repo.get_by_username(username)
+    user = user_repo.get_by_id(user_id)
     if user is None:
-        raise UserNotFoundError(f"Not found username: {username}")
+        raise UserNotFoundError(f"Not found user_id: {user_id}")
     return UserDTO(
         user_id=user.id,
         username=user.username,
@@ -34,14 +34,14 @@ def get_user_by_username(
 
 
 def create_tweet(
-    tweet_repo: TweetRepository,
-    user_repo: UserRepository,
-    username: str,
+    tweet_repo: RepositoryInterface,
+    user_repo: RepositoryInterface,
+    user_id: int,
     content: str,
 ) -> TweetDTO:
-    user = user_repo.get_by_username(username)
+    user = user_repo.get_by_id(user_id)
     if user is None:
-        raise UserNotFoundError(f"Not found username: {username}")
+        raise UserNotFoundError(f"Not found user_id: {user_id}")
     tweet = tweet_repo.add(Tweet(user=user, content=content))
     return TweetDTO(
         tweet_id=tweet.id,
