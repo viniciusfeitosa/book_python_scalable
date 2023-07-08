@@ -1,37 +1,18 @@
 from datetime import datetime
-from sqlalchemy import (
-    Table,
-    Column,
-    Integer,
-    String,
-    DateTime,
-    ForeignKey,
-)
-from sqlalchemy.orm import (
-    registry,
-    relationship,
-    backref,
-)
 
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import backref, registry, relationship
 
 import app.core.model as model
 
-
 mapper_registry = registry()
-
-
-emails = Table(
-    'emails',
-    mapper_registry.metadata,
-    Column('address', String(150), primary_key=True),
-)
 
 users = Table(
     'users',
     mapper_registry.metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('username', String(100), nullable=False, unique=True),
-    Column('email',  ForeignKey("emails.address")),
+    Column('email',  String(150), nullable=False, unique=True),
     Column('created_at', DateTime, default=datetime.utcnow),
 )
 
@@ -62,7 +43,6 @@ likes = Table(
 
 
 def load_mappers():
-    mapper_registry.map_imperatively(model.Email, emails)
     users_mapper = mapper_registry.map_imperatively(
         model.User,
         users,

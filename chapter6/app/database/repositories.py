@@ -1,6 +1,8 @@
-import app.core.model as model
-from sqlalchemy.orm import Session
 from typing import Optional, Protocol
+
+from sqlalchemy.orm import Session
+
+import app.core.model as model
 
 
 class RepositoryInterface(Protocol):
@@ -21,7 +23,7 @@ class UserRepository:
 
     def add(self, obj: model.User) -> model.User:
         self.session.add(obj)
-        self.session.flush()
+        self.session.commit()
         self.session.refresh(obj)
         return obj
 
@@ -40,7 +42,7 @@ class TweetRepository:
 
     def add(self, obj: model.Tweet) -> model.Tweet:
         self.session.add(obj)
-        self.session.flush()
+        self.session.commit()
         self.session.refresh(obj)
         return obj
 

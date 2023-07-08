@@ -1,5 +1,5 @@
+from app.core.model import Tweet, TweetDTO, User, UserDTO
 from app.database.repositories import RepositoryInterface
-from app.core.model import User, UserDTO, Tweet, TweetDTO
 
 
 class UserNotFoundError(Exception):

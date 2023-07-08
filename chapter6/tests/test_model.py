@@ -1,27 +1,6 @@
-import app.core.model as model
 from sqlalchemy import text
 
-
-def test_load_email(session):
-    session.execute(
-        text('''INSERT INTO emails (address) VALUES
-        ("test1@test.com"),
-        ("test2@test.com"),
-        ("test3@test.com")''')
-    )
-    expected = [
-        model.Email("test1@test.com"),
-        model.Email("test2@test.com"),
-        model.Email("test3@test.com"),
-    ]
-    assert session.query(model.Email).all() == expected
-
-
-def test_create_email(session):
-    e = model.Email("test_create1@test.com")
-    session.add(e)
-    session.commit()
-    assert session.query(model.Email).first() == e
+import app.core.model as model
 
 
 def test_load_user(session):

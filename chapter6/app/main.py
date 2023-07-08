@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api import endpoints
+from app.database.schema import mapper_registry, load_mappers
+from app.database.database import engine
+
+mapper_registry.metadata.create_all(engine)
+load_mappers()
 
 app = FastAPI()
 

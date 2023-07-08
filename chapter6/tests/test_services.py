@@ -1,7 +1,7 @@
 import pytest
 
-from app.database import repositories
 from app.core import services
+from app.database import repositories
 
 
 def test_service_create_user(session):
