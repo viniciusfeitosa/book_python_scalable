@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 import app.core.model as model
 
 
-class RepositoryInterface(Protocol):
+class RepositoryPort(Protocol):
     def add(self, obj: model.Model) -> model.Model:
         ...
 

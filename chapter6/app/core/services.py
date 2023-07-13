@@ -1,5 +1,5 @@
 from app.core.model import Tweet, TweetDTO, User, UserDTO
-from app.database.repositories import RepositoryInterface
+from app.database.repositories import RepositoryPort
 
 
 class UserNotFoundError(Exception):
@@ -7,7 +7,7 @@ class UserNotFoundError(Exception):
 
 
 def create_user(
-    user_repo: RepositoryInterface,
+    user_repo: RepositoryPort,
     username: str,
     email: str,
 ) -> UserDTO:
@@ -20,11 +20,11 @@ def create_user(
 
 
 def get_user_by_id(
-    user_repo: RepositoryInterface,
+    user_repo: RepositoryPort,
     user_id: int,
 ) -> UserDTO:
     user = user_repo.get_by_id(user_id)
-    if user is None:
+    if not user:
         raise UserNotFoundError(f"Not found user_id: {user_id}")
     return UserDTO(
         user_id=user.id,
@@ -34,13 +34,13 @@ def get_user_by_id(
 
 
 def create_tweet(
-    tweet_repo: RepositoryInterface,
-    user_repo: RepositoryInterface,
+    tweet_repo: RepositoryPort,
+    user_repo: RepositoryPort,
     user_id: int,
     content: str,
 ) -> TweetDTO:
     user = user_repo.get_by_id(user_id)
-    if user is None:
+    if not user:
         raise UserNotFoundError(f"Not found user_id: {user_id}")
     tweet = tweet_repo.add(Tweet(user=user, content=content))
     return TweetDTO(

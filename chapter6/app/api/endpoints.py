@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.core import services
 from app.core.model import TweetDTO, UserDTO
 from app.database.database import get_tweet_repository, get_user_repository
-from app.database.repositories import RepositoryInterface
+from app.database.repositories import RepositoryPort
 
 router = APIRouter()
 
@@ -25,7 +25,7 @@ class TweetInput:
 @router.post("/users", response_model=UserDTO)
 def create_user(
     user: UserInput,
-    user_repository: RepositoryInterface = Depends(get_user_repository)
+    user_repository: RepositoryPort = Depends(get_user_repository)
 ):
     return services.create_user(
         user_repo=user_repository,
@@ -37,7 +37,7 @@ def create_user(
 @router.get("/users/{user_id}", response_model=UserDTO)
 def get_user(
     user_id: int,
-    user_repository: RepositoryInterface = Depends(get_user_repository)
+    user_repository: RepositoryPort = Depends(get_user_repository)
 ):
     try:
         return services.get_user_by_id(
@@ -51,8 +51,8 @@ def get_user(
 @router.post("/tweets", response_model=TweetDTO)
 def create_tweet(
     tweet: TweetInput,
-    user_repository: RepositoryInterface = Depends(get_user_repository),
-    tweet_repository: RepositoryInterface = Depends(get_tweet_repository),
+    user_repository: RepositoryPort = Depends(get_user_repository),
+    tweet_repository: RepositoryPort = Depends(get_tweet_repository),
 ):
     try:
         return services.create_tweet(
