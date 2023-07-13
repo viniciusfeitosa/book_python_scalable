@@ -1,11 +1,31 @@
+from typing import Optional
+
 import pytest
 
-from app.core import services
+from app.core import model, services
 from app.database import repositories
 
 
-def test_service_create_user(session):
-    repo = repositories.UserRepository(session)
+class FakeUserRepository:
+    def add(self, obj: model.Model) -> model.Model:
+        obj.id = 1
+        return obj
+
+    def get_by_id(self, obj_id: int) -> Optional[model.Model]:
+        if obj_id == 1:
+            user = model.User('test', 'test@test.com')
+            user.id = obj_id
+            return user
+        return None
+
+    def list_all(self) -> list[model.Model]:
+        user = model.User('test', 'test@test.com')
+        user.id = 1
+        return [user]
+
+
+def test_service_create_user():
+    repo = FakeUserRepository()
     dto = services.create_user(
         user_repo=repo,
         username='test',
@@ -16,19 +36,14 @@ def test_service_create_user(session):
     assert dto.email == 'test@test.com'
 
 
-def test_service_get_user_by_id(session):
-    repo = repositories.UserRepository(session)
+def test_service_get_user_by_id():
+    repo = FakeUserRepository()
     with pytest.raises(services.UserNotFoundError) as err:
         services.get_user_by_id(
             user_repo=repo,
-            user_id=1,
+            user_id=2,
         )
-    assert str(err.value) == 'Not found user_id: 1'
-    services.create_user(
-        user_repo=repo,
-        username='test',
-        email='test@test.com',
-    )
+    assert str(err.value) == 'Not found user_id: 2'
     dto = services.get_user_by_id(
         user_repo=repo,
         user_id=1,
@@ -39,12 +54,7 @@ def test_service_get_user_by_id(session):
 
 
 def test_service_create_tweet(session):
-    user_repo = repositories.UserRepository(session)
-    services.create_user(
-        user_repo=user_repo,
-        username='test',
-        email='test@test.com',
-    )
+    user_repo = FakeUserRepository()
     tweet_repo = repositories.TweetRepository(session)
     dto = services.create_tweet(
         tweet_repo=tweet_repo,

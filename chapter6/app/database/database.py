@@ -1,9 +1,10 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from fastapi import Depends
 import os
 
-from app.database.repositories import UserRepository, TweetRepository
+from fastapi import Depends
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+
+from app.database.repositories import TweetRepository, UserRepository
 
 DATABASE_URL = os.getenv("DB_URL", "")
 
