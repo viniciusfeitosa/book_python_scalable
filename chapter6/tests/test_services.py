@@ -2,7 +2,7 @@ from typing import Optional
 
 import pytest
 
-from app.core import model, services
+from app.core import model, usecases
 from app.database import repositories
 
 
@@ -26,7 +26,7 @@ class FakeUserRepository:
 
 def test_service_create_user():
     repo = FakeUserRepository()
-    dto = services.create_user(
+    dto = usecases.create_user(
         user_repo=repo,
         username='test',
         email='test@test.com',
@@ -38,13 +38,13 @@ def test_service_create_user():
 
 def test_service_get_user_by_id():
     repo = FakeUserRepository()
-    with pytest.raises(services.UserNotFoundError) as err:
-        services.get_user_by_id(
+    with pytest.raises(usecases.UserNotFoundError) as err:
+        usecases.get_user_by_id(
             user_repo=repo,
             user_id=2,
         )
     assert str(err.value) == 'Not found user_id: 2'
-    dto = services.get_user_by_id(
+    dto = usecases.get_user_by_id(
         user_repo=repo,
         user_id=1,
     )
@@ -56,7 +56,7 @@ def test_service_get_user_by_id():
 def test_service_create_tweet(session):
     user_repo = FakeUserRepository()
     tweet_repo = repositories.TweetRepository(session)
-    dto = services.create_tweet(
+    dto = usecases.create_tweet(
         tweet_repo=tweet_repo,
         user_repo=user_repo,
         user_id=1,
